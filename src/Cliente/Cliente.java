@@ -16,9 +16,8 @@ public class Cliente implements Runnable{
 	int[] porta;
 	int meuHost;
 	
-	String chaveVinegere, chaveHmac, chaveAES;
 	
-	public Cliente(String nome, String ip, int[] porta, int host, String chaveVinegere, String chaveHmac, String chaveAES) {
+	public Cliente(String nome, String ip, int[] porta, int host) {
 		this.nome = nome;
 		this.ip = ip;
 		this.porta = porta;
@@ -26,13 +25,10 @@ public class Cliente implements Runnable{
 		//Thread run = new Thread(() -> run());
 		//run.start();
 		//run();
-		this.chaveVinegere = chaveVinegere;
-		this.chaveHmac = chaveHmac;
-		this.chaveAES = chaveAES;
 	}
 
 	public void run() {
-		this.implCliente = new ImplCliente(this.getClientes(), this.nome, chaveVinegere, chaveHmac, chaveAES);
+		this.implCliente = new ImplCliente(this.getClientes(), this.nome);
 		Thread t = new Thread(this.implCliente);
         t.start();
 		for (int i = 0; i < porta.length;i++) {

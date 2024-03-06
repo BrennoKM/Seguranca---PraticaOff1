@@ -11,17 +11,17 @@ public class ContaManager implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Map<String, Conta> mapaContas;
     private final String arquivo = "contas.ser";
-    String chaveVinegere = "chaveVigenere";
+    String chaveVigenere = "chaveVigenere";
 	String chaveHmac = "chaveHmac";
 	String chaveAES = "chaveAES12341234";
     Cifrador cifrador;
     
-    public ContaManager(String chaveVinegere, String chaveHmac, String chaveAES) throws Exception {
+    public ContaManager(String chaveVigenere, String chaveHmac, String chaveAES) throws Exception {
         mapaContas = new HashMap<>();
-        this.chaveVinegere = chaveVinegere;
+        this.chaveVigenere = chaveVigenere;
 		this.chaveHmac = chaveHmac;
 		this.chaveAES = chaveAES;
-		cifrador = new Cifrador(this.chaveVinegere, this.chaveHmac, this.chaveAES);
+		cifrador = new Cifrador(this.chaveVigenere, this.chaveHmac, this.chaveAES);
 		
 		
 		//System.out.println(cifrador.descriptografar("g0XgXoe+stE7tsfrA8N1qQ=="));

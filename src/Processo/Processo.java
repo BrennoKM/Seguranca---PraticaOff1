@@ -8,22 +8,23 @@ public class Processo {
 	Servidor servidor;
 	
 	public Processo(String nome, int host, int[] porta) {
-		String chaveVinegere = "chaveVigenere";
+		// chaves que o servidor usa pra abrir o "banco de dados"
+		String chaveVigenere = "chaveVigenere";
 		String chaveHmac = "chaveHmac";
 		String chaveAES = "chaveAES12341234";
 		
 		if(porta != null) {
-			this.cliente = new Cliente(nome, "localhost", porta, host, chaveVinegere, chaveHmac, chaveAES);
+			this.cliente = new Cliente(nome, "localhost", porta, host);
 			Thread client = new Thread(this.cliente);
 			client.start();
 		}
 		if(host != 0) {
 			if(porta != null) {
-				this.servidor = new Servidor(nome, host, null, chaveVinegere, chaveHmac, chaveAES);
+				this.servidor = new Servidor(nome, host, null, chaveVigenere, chaveHmac, chaveAES);
 				Thread server = new Thread(this.servidor);
 				server.start();
 			} else {
-				this.servidor = new Servidor(nome, host, this.cliente, chaveVinegere, chaveHmac, chaveAES);
+				this.servidor = new Servidor(nome, host, this.cliente, chaveVigenere, chaveHmac, chaveAES);
 				Thread server = new Thread(this.servidor);
 				server.start();
 			}

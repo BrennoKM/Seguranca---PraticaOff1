@@ -14,108 +14,122 @@ public class ImplCliente implements Runnable {
 	private boolean conexao = true, login = false;
 	public static int contConexoes = 0;
 	private String nome;
-	String chaveVinegere, chaveHmac, chaveAES;
-	Cifrador cifrador;
+	String chaveVigenere, chaveHmac, chaveAES;
+	Scanner in = new Scanner(System.in);
 
-	public ImplCliente(List<ConexaoCliente> clientes, String nome, String chaveVinegere, String chaveHmac,
-			String chaveAES) {
+	public ImplCliente(List<ConexaoCliente> clientes, String nome) {
 		this.clientes = clientes;
 		this.nome = nome;
-		this.chaveVinegere = chaveVinegere;
-		this.chaveHmac = chaveHmac;
-		this.chaveAES = chaveAES;
-		cifrador = new Cifrador(chaveVinegere, chaveHmac, chaveAES);
+		/*
+		 * this.chaveVigenere = chaveVigenere; this.chaveHmac = chaveHmac; this.chaveAES
+		 * = chaveAES; cifrador = new Cifrador(chaveVigenere, chaveHmac, chaveAES);
+		 */
 	}
 
 	public void run() {
 		try {
 
 			// Prepara para leitura do teclado
-			Scanner in = new Scanner(System.in);
+			Thread.sleep(1000);
 			Mensagem mensagem = null;
+			while (!conexao) {
 
+			}
+			for (ConexaoCliente cliente : this.clientes) {
+				Thread.sleep(500);
+				logar(in, cliente);
+			}
 			Thread ouvirServidor = new Thread(() -> ouvirServer());
 			ouvirServidor.start();
-			logar(in, mensagem);
 
 			while (conexao) {
-				Thread.sleep(300);
-				System.out.println("Escolha uma ação: " + "\n1 - Unicast" + "\n2 - Broadcast" + "\n3 - Saque"
-						+ "\n4 - Depósito" + "\n5 - Transferência" + "\n6 - Consultar saldo"
-						+ "\n7 - Simular investimentos" + "\n8 - Encerrar conexão");
-				int opcaoInt = 0;
-				do {
-					try {
-						String opcaoString = in.nextLine();
-						opcaoInt = Integer.valueOf(opcaoString);
-					} catch (NumberFormatException | NoSuchElementException e) {
-						System.err.println("Formato ou valor invalido");
-					}
-				} while (opcaoInt < 1 || opcaoInt > 7);
-				String emissor = this.nome;
-				String destinatario = "", conteudo = "", sufixo = "";
-				switch (opcaoInt) {
-				case 1:
-					System.out.println("Digite o destinatario da mensagem: ");
-					destinatario = in.nextLine();
-					System.out.println("Digite o conteudo da mensagem: ");
-					conteudo = in.nextLine();
-					mensagem = new Mensagem(emissor, destinatario, conteudo, "unicast");
-					break;
-				case 2:
-					System.out.println("Digite o conteudo da mensagem: ");
-					conteudo = in.nextLine();
-					mensagem = new Mensagem(emissor, "todos (Broadcast)", conteudo, "broadcast");
-					break;
-				case 3:
-					sufixo = "do seu saque: ";
-					conteudo = stringDouble(sufixo, in);
-					mensagem = new Mensagem(emissor, "", conteudo, "saque");
-					break;
-				case 4:
-					sufixo = "do seu deposito: ";
-					conteudo = stringDouble(sufixo, in);
-					mensagem = new Mensagem(emissor, "", conteudo, "deposito");
-					break;
-				case 5:
-					System.out.println("Digite o pix do destinatario (email): ");
-					destinatario = in.nextLine();
-					sufixo = "do seu pix: ";
-					conteudo = stringDouble(sufixo, in);
-					mensagem = new Mensagem(emissor, destinatario, conteudo, "transferencia");
-					break;
-				case 6:
-					mensagem = new Mensagem(emissor, "", "protocolo", "saldo");
-					break;
-				case 7:
-					mensagem = new Mensagem(emissor, "", "protocolo", "investimentos");
-					break;
-				case 8:
-					mensagem = new Mensagem(emissor, "", "fim", "fim");
-					break;
-				}
-				mensagem.setHmac(cifrador.calcularHmac(mensagem.getConteudo()));
-				mensagem.setConteudo(cifrador.criptografar(mensagem.getConteudo()));
-
-				for (ConexaoCliente cliente : this.clientes) {
-					cliente.setMensagemAnterior(mensagem);
-					if (mensagem.getConteudo().equalsIgnoreCase("fim")) {
-						conexao = false;
-					} else {
-						if (mensagem.getTipo().equals("unicast") || mensagem.getTipo().equals("broadcast")) {
-							System.out.println("Cliente " + this.nome + ": enviando mensagem para "
-									+ cliente.getNomeServerConectado() + " com destino em "
-									+ mensagem.getDestinatario());
-						} else {
-							System.out.println("Cliente " + this.nome + ": enviando resquisição para "
-									+ cliente.getNomeServerConectado() + " tipo --> " + mensagem.getTipo());
+				if (login) {
+					Thread.sleep(300);
+					System.out.println("Escolha uma ação: " + "\n1 - Unicast" + "\n2 - Broadcast" + "\n3 - Saque"
+							+ "\n4 - Depósito" + "\n5 - Transferência" + "\n6 - Consultar saldo"
+							+ "\n7 - Simular investimentos" + "\n8 - Encerrar conexão");
+					int opcaoInt = 0;
+					do {
+						try {
+							String opcaoString = in.nextLine();
+							opcaoInt = Integer.valueOf(opcaoString);
+						} catch (NumberFormatException | NoSuchElementException e) {
+							System.err.println("Formato ou valor invalido");
 						}
-						cliente.outputObject.writeObject(mensagem);
-						// Mensagem msg = ouvirServerUmaVez(cliente);
-						// System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+					} while (opcaoInt < 1 || opcaoInt > 7);
+					String emissor = this.nome;
+					String destinatario = "", conteudo = "", sufixo = "";
+					switch (opcaoInt) {
+					case 1:
+						System.out.println("Digite o destinatario da mensagem: ");
+						destinatario = in.nextLine();
+						System.out.println("Digite o conteudo da mensagem: ");
+						conteudo = in.nextLine();
+						mensagem = new Mensagem(emissor, destinatario, conteudo, "unicast");
+						break;
+					case 2:
+						System.out.println("Digite o conteudo da mensagem: ");
+						conteudo = in.nextLine();
+						mensagem = new Mensagem(emissor, "todos (Broadcast)", conteudo, "broadcast");
+						break;
+					case 3:
+						sufixo = "do seu saque: ";
+						conteudo = stringDouble(sufixo, in);
+						mensagem = new Mensagem(emissor, "", conteudo, "saque");
+						break;
+					case 4:
+						sufixo = "do seu deposito: ";
+						conteudo = stringDouble(sufixo, in);
+						mensagem = new Mensagem(emissor, "", conteudo, "deposito");
+						break;
+					case 5:
+						System.out.println("Digite o pix do destinatario (email): ");
+						destinatario = in.nextLine();
+						sufixo = "do seu pix: ";
+						conteudo = stringDouble(sufixo, in);
+						mensagem = new Mensagem(emissor, destinatario, conteudo, "transferencia");
+						break;
+					case 6:
+						mensagem = new Mensagem(emissor, "", "protocolo", "saldo");
+						break;
+					case 7:
+						mensagem = new Mensagem(emissor, "", "protocolo", "investimentos");
+						break;
+					case 8:
+						mensagem = new Mensagem(emissor, "", "fim", "fim");
+						break;
+					default:
+
+						break;
 					}
+
+					for (ConexaoCliente cliente : this.clientes) {
+						Cifrador cifrador = cliente.getCifrador();
+
+						mensagem.setHmac(cifrador.calcularHmac(mensagem.getConteudo()));
+						mensagem.setConteudo(cifrador.criptografar(mensagem.getConteudo()));
+
+						cliente.setMensagemAnterior(mensagem);
+
+						if (mensagem.getConteudo().equalsIgnoreCase("fim")) {
+							conexao = false;
+						} else {
+							if (mensagem.getTipo().equals("unicast") || mensagem.getTipo().equals("broadcast")) {
+								System.out.println("Cliente " + this.nome + ": enviando mensagem para "
+										+ cliente.getNomeServerConectado() + " com destino em "
+										+ mensagem.getDestinatario());
+							} else {
+								System.out.println("Cliente " + this.nome + ": enviando resquisição para "
+										+ cliente.getNomeServerConectado() + " tipo --> " + mensagem.getTipo());
+							}
+							cliente.outputObject.writeObject(mensagem);
+							// Mensagem msg = ouvirServerUmaVez(cliente);
+							// System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+						}
+					}
+					Thread.sleep(400);
+					// System.out.println("Logado looooppp");
 				}
-				// System.out.println("Logado looooppp");
 			}
 			for (ConexaoCliente cliente : this.clientes) {
 				System.out.println(
@@ -144,7 +158,7 @@ public class ImplCliente implements Runnable {
 
 			try {
 				double valorConvertido = Double.parseDouble(valor);
-				if(valorConvertido > 0) {
+				if (valorConvertido > 0) {
 					entradaValida = true;
 				}
 			} catch (NumberFormatException e) {
@@ -154,29 +168,33 @@ public class ImplCliente implements Runnable {
 		return valor;
 	}
 
-	private void logar(Scanner in, Mensagem mensagem) throws Exception {
-		Thread.sleep(100);
+	private void logar(Scanner in, ConexaoCliente cliente) throws Exception {
+		Mensagem mensagem = null;
+		Cifrador cifrador = cliente.getCifrador();
+		login = false;
+		// Thread.sleep(100);
 		while (!login) {
-			System.out.println("Cliente " + this.nome + ": escolha uma opção de mensagem \n1 - Logar\n2 - Cadastrar");
-			int opcaoInt = 0;
-			do {
-				try {
-					String opcaoString = in.nextLine();
-					opcaoInt = Integer.valueOf(opcaoString);
-				} catch (NumberFormatException | NoSuchElementException e) {
-					System.err.println("Formato ou valor invalido");
+			if (!login) {
+				System.out
+						.println("Cliente " + this.nome + ": escolha uma opção de mensagem \n1 - Logar\n2 - Cadastrar");
+				int opcaoInt = 0;
+				do {
+					try {
+						String opcaoString = in.nextLine();
+						opcaoInt = Integer.valueOf(opcaoString);
+					} catch (NumberFormatException | NoSuchElementException e) {
+						System.err.println("Formato ou valor invalido");
+					}
+				} while (opcaoInt < 1 || opcaoInt > 2);
+				switch (opcaoInt) {
+				case 1:
+					mensagem = construirMensagemLogin("login", in, cifrador);
+					break;
+				case 2:
+					mensagem = construirMensagemLogin("cadastro", in, cifrador);
+					break;
 				}
-			} while (opcaoInt < 1 || opcaoInt > 2);
-			switch (opcaoInt) {
-			case 1:
-				mensagem = construirMensagemLogin("login", in);
-				break;
-			case 2:
-				mensagem = construirMensagemLogin("cadastro", in);
-				break;
-			}
 
-			for (ConexaoCliente cliente : this.clientes) {
 				mensagem.setDestinatario(cliente.getNomeServerConectado());
 				cliente.setMensagemAnterior(mensagem);
 				if (mensagem.getConteudo().equalsIgnoreCase("fim")) {
@@ -185,7 +203,6 @@ public class ImplCliente implements Runnable {
 					System.out.println("Cliente " + this.nome + ": enviando resquisição para "
 							+ cliente.getNomeServerConectado() + " tipo --> " + mensagem.getTipo());
 					cliente.outputObject.writeObject(mensagem);
-					Thread.sleep(100);
 
 					/*
 					 * Mensagem msg = ouvirServerUmaVez(cliente); System.out.println("Cliente " +
@@ -195,15 +212,35 @@ public class ImplCliente implements Runnable {
 					 * 
 					 * if (msg.getTipo().equals("logado")) { this.login = true; }
 					 */
-
 				}
-			}
-		}
+				Mensagem msg = (Mensagem) cliente.inputObject.readObject();
+				if (msg.getTipo().equals("logado")) {
+					msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+					cliente.receberChaveHmac();
+					this.login = true;
+					//Thread.sleep(300);
+					System.out.println("Chaves: vigenere=" + cliente.chaveVigenere + " aes=" + cliente.chaveAES
+							+ " hmac=" + cliente.chaveHmac);
+				} else if (msg.getTipo().equals("falha")) {
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: falha na autentificação");
+				} else if (msg.getTipo().equals("chaveVigenere") || msg.getTipo().equals("chaveAES")
+						|| msg.getTipo().equals("chaveHmac")) {
 
+				} else {
+					msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+				}
+				Thread.sleep(500);
+
+			}
+			Thread.sleep(200);
+		}
 	}
 
 	@SuppressWarnings("unused")
 	private Mensagem ouvirServerUmaVez(ConexaoCliente cliente) throws Exception {
+		Cifrador cifrador = cliente.getCifrador();
 		Mensagem msg = (Mensagem) cliente.inputObject.readObject();
 		msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
 		return msg;
@@ -237,18 +274,30 @@ public class ImplCliente implements Runnable {
 	}
 
 	private void ouvindoServer(int index) throws Exception {
+		Cifrador cifrador = clientes.get(index).getCifrador();
+		while (!conexao) {
+
+		}
 		while (conexao) {
-			Mensagem msg = (Mensagem) clientes.get(index).inputObject.readObject();
-			if (msg.getTipo().equals("logado")) {
-				msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
-				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
-				this.login = true;
-			} else if(msg.getTipo().equals("falha")) {
-				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: falha na autentificação");
-			} else {
-				msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
-				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+			// System.out.println("Whilleee conexaoo");
+			if (login) {
+				Mensagem msg = (Mensagem) clientes.get(index).inputObject.readObject();
+				//System.out.println("Mensagem ouvindo server: " + msg + " " + msg.getTipo());
+				if (msg.getTipo().equals("logado")) {
+					msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+					clientes.get(index).receberChaveHmac();
+					System.out.println("Chave: vigenere=" + clientes.get(index).chaveVigenere + " aes="
+							+ clientes.get(index).chaveAES + " hmac=" + clientes.get(index).chaveHmac);
+					this.login = true;
+				} else if (msg.getTipo().equals("falha")) {
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: falha na autentificação");
+				} else {
+					msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+					System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
+				}
 			}
+			Thread.sleep(1000);
 		}
 	}
 
@@ -267,7 +316,7 @@ public class ImplCliente implements Runnable {
 		return new Mensagem(emissor, destinatario, conteudo, tipo);
 	}
 
-	private Mensagem construirMensagemLogin(String tipo, Scanner in) throws Exception {
+	private Mensagem construirMensagemLogin(String tipo, Scanner in, Cifrador cifrador) throws Exception {
 		String emissor = this.nome;
 		String email, senha, nome, cpf, endereco, telefone;
 		Conta conta = null;
@@ -296,7 +345,7 @@ public class ImplCliente implements Runnable {
 		conta.setSenha(cifrador.criptografar(senha));
 		Mensagem msg = new Mensagem(emissor, "", "protocolo", tipo);
 		msg.setConta(conta);
-		msg.setHmac(cifrador.calcularHmac(msg.getConteudo()));
+		// msg.setHmac(cifrador.calcularHmac(msg.getConteudo()));
 		msg.setConteudo(cifrador.criptografar(msg.getConteudo()));
 		return msg;
 	}

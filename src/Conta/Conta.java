@@ -82,13 +82,13 @@ public class Conta implements Serializable{
 	
 	public String toString() {
         return "Conta{" +
-                "nome='" + this.nome + '\'' +
+                "nome=" + this.nome +
                 ", cpf=" + this.cpf +
                 ", email=" + this.email +
                 ", senha=" + this.senha +
-                ", endereco='" + this.endereco +
-                ", telefone='" + this.telefone +
-                ", saldo='" + this.saldo + '\'' +
+                ", endereco=" + this.endereco +
+                ", telefone=" + this.telefone +
+                ", saldo=" + this.saldo +
                 '}';
     }
 }
