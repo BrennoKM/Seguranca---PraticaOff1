@@ -130,7 +130,6 @@ public class ImplCliente implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -144,8 +143,10 @@ public class ImplCliente implements Runnable {
 			valor = in.nextLine();
 
 			try {
-				Double.parseDouble(valor);
-				entradaValida = true;
+				double valorConvertido = Double.parseDouble(valor);
+				if(valorConvertido > 0) {
+					entradaValida = true;
+				}
 			} catch (NumberFormatException e) {
 				System.out.println("Entrada inválida. Por favor, digite um número válido.");
 			}
@@ -181,8 +182,8 @@ public class ImplCliente implements Runnable {
 				if (mensagem.getConteudo().equalsIgnoreCase("fim")) {
 					conexao = false;
 				} else {
-					System.out.println("Cliente " + this.nome + ": enviando mensagem para "
-							+ cliente.getNomeServerConectado() + " com destino em " + mensagem.getDestinatario());
+					System.out.println("Cliente " + this.nome + ": enviando resquisição para "
+							+ cliente.getNomeServerConectado() + " tipo --> " + mensagem.getTipo());
 					cliente.outputObject.writeObject(mensagem);
 					Thread.sleep(100);
 
@@ -208,7 +209,6 @@ public class ImplCliente implements Runnable {
 		return msg;
 	}
 
-	@SuppressWarnings("unused")
 	private void ouvirServer() {
 		int numThreads = 0;
 		while (true) {
@@ -239,10 +239,15 @@ public class ImplCliente implements Runnable {
 	private void ouvindoServer(int index) throws Exception {
 		while (conexao) {
 			Mensagem msg = (Mensagem) clientes.get(index).inputObject.readObject();
-			msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
-			System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
 			if (msg.getTipo().equals("logado")) {
+				msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
 				this.login = true;
+			} else if(msg.getTipo().equals("falha")) {
+				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: falha na autentificação");
+			} else {
+				msg.setConteudo(cifrador.descriptografar(msg.getConteudo()));
+				System.out.println("Cliente " + this.nome + ": recebeu a mensagem: " + msg);
 			}
 		}
 	}

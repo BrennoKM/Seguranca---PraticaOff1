@@ -36,7 +36,7 @@ public class Processo {
 		
 		// exemplo extrela
 				new Processo("Banco", 5007, null);
-		//		new Processo("p2", 0, new int[]{5007});
+		//		new Processo("p4", 0, new int[]{5007});
 		//		new Processo("p3", 0, new int[]{5007});
 		//		new Processo("p4", 0, new int[]{5007});
 		

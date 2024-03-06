@@ -107,14 +107,14 @@ public class ContaManager implements Serializable{
         manager.carregarLista();
 
         // Adicionar ou manipular contas
-        manager.adicionarConta("davi@gmail.com", new Conta("Davi", "12345678900", "bem ali do meu lado", "12345", "davi@gmail.com", "qwe1234"));
-        manager.adicionarConta("brennokm@gmail.com", new Conta("Brenno", "98765432100", "bem ali", "1234", "brennokm@gmail.com", "qwe123"));
-        manager.adicionarConta("icaro@gmail.com", new Conta("Icaro", "98765432109", "bem ali pertinho", "123466", "icaro@gmail.com", "qwe12"));
+        //manager.adicionarConta("davi@gmail.com", new Conta("Davi", "12345678900", "bem ali do meu lado", "12345", "davi@gmail.com", "qwe1234"));
+        //manager.adicionarConta("brennokm@gmail.com", new Conta("Brenno", "98765432100", "bem ali", "1234", "brennokm@gmail.com", "qwe123"));
+        //manager.adicionarConta("icaro@gmail.com", new Conta("Icaro", "98765432109", "bem ali pertinho", "123466", "icaro@gmail.com", "qwe12"));
         //Conta contaBusca = manager.buscarConta("98765432109");
         //contaBusca.setSaldo(95);
         //manager.atualizarConta("98765432109", contaBusca);
         // Salvar lista no arquivo
-        manager.salvarLista();
+        //manager.salvarLista();
 
         // Buscar conta pelo CPF
         Conta conta = manager.buscarConta("icaro@gmail.com");

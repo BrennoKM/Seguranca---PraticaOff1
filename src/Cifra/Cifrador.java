@@ -1,10 +1,10 @@
 package Cifra;
 
 public class Cifrador {
-	//String chaveVinegere, chaveHmac, chaveAES;
-	String chaveVinegere = "chaveVigenere";
-	String chaveHmac = "chaveHmac";
-	String chaveAES = "chaveAES12341234";
+	String chaveVinegere, chaveHmac, chaveAES;
+	//String chaveVinegere = "chaveVigenere";
+	//String chaveHmac = "chaveHmac";
+	//String chaveAES = "chaveAES12341234";
 	public Cifrador(String chaveVinegere, String chaveHmac,String chaveAES) {
 		this.chaveVinegere = chaveVinegere;
 		this.chaveHmac = chaveHmac;

@@ -149,8 +149,8 @@ public class ImplServidor implements Runnable {
 				+ mensagemRecebida.getEmissor() + " efetuado");
 		conexoesServidor.get(index).outputObject.writeObject(new Mensagem(this.nome, "",
 				cifrador.criptografar("Deposito realizado, seu novo saldo é: " + contaLogada.getSaldo()), "deposito"));
-		contas.salvarLista();
-		contas.carregarLista();
+		//contas.salvarLista();
+		//contas.carregarLista();
 	}
 
 	private void transferencia(Conta conta, Mensagem mensagemRecebida, int index) throws Exception {
