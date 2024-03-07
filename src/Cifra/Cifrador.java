@@ -1,14 +1,14 @@
 package Cifra;
 
 public class Cifrador {
-	String chaveVinegere, chaveHmac, chaveAES;
-
+	String chaveVinegere, chaveAES;
+	String chaveHmac = "chaveHmacfalsificada";;
 	// String chaveVinegere = "chaveVigenere";
 	// String chaveHmac = "chaveHmac";
 	// String chaveAES = "chaveAES12341234";
 	public Cifrador(String chaveVinegere, String chaveHmac, String chaveAES) {
 		this.chaveVinegere = chaveVinegere;
-		this.chaveHmac = chaveHmac;
+		//this.chaveHmac = chaveHmac;
 		this.chaveAES = chaveAES;
 	}
 

@@ -69,7 +69,9 @@ public class ImplServidor implements Runnable {
 		Cifrador cifrador = new Cifrador(conexoesServidor.get(index).chaveVigenere,
 				conexoesServidor.get(index).chaveAES);
 		try {
-			contaLogada = autentificarLoginCadastro(mensagemRecebida, index, cifrador);
+			while(contaLogada==null) {
+				contaLogada = autentificarLoginCadastro(mensagemRecebida, index, cifrador);
+			}
 			while (conexao) {
 				contas.salvarLista();
 				contas.carregarLista();
@@ -196,8 +198,8 @@ public class ImplServidor implements Runnable {
 		}
 	}
 
-	private void saldo(Conta contaLogada, Mensagem mensagemRecebida, int index, Cifrador cifrador) throws Exception {
-		System.out.println("recebeu requisição saldo");
+	private void saldo(Conta conta, Mensagem mensagemRecebida, int index, Cifrador cifrador) throws Exception {
+		Conta contaLogada = contas.buscarConta(conta.getEmail());
 		System.out.println("Servidor " + this.nome + ": Usuario " + mensagemRecebida.getEmissor() + " saldo -> "
 				+ contaLogada.getSaldo());
 		conexoesServidor.get(index).outputObject.writeObject(
@@ -212,8 +214,7 @@ public class ImplServidor implements Runnable {
 		return calcularRendimento(dinheiro * taxa, taxa, --meses);
 	}
 
-	private void investimentos(Conta conta, Mensagem mensagemRecebida, int index, Cifrador cifrador)
-			throws Exception {
+	private void investimentos(Conta conta, Mensagem mensagemRecebida, int index, Cifrador cifrador) throws Exception {
 		System.out.println("Servidor " + this.nome + ": Simulando investimentos do cliente "
 				+ mensagemRecebida.getEmissor() + "...");
 		Conta contaLogada = contas.buscarConta(conta.getEmail());
@@ -287,7 +288,7 @@ public class ImplServidor implements Runnable {
 				conexoesServidor.get(index).outputObject.writeObject(
 						new Mensagem(this.nome, "", cifrador.criptografar("Logado com sucesso"), "logado"));
 				conexoesServidor.get(index).enviarChaveHmac();
-
+				return conta;
 			} else {
 				System.out.println(
 						"Servidor " + this.nome + ": " + mensagemRecebida.getEmissor() + " digitou a senha incorreta");
@@ -296,7 +297,7 @@ public class ImplServidor implements Runnable {
 
 			}
 		}
-		return conta;
+		return null;
 	}
 
 	private Conta fazerCadastro(Mensagem mensagemRecebida, int index, Cifrador cifrador) throws Exception {
@@ -315,19 +316,21 @@ public class ImplServidor implements Runnable {
 
 			System.out.println("Servidor " + this.nome + ": " + mensagemRecebida.getEmissor()
 					+ " se cadastrou com sucesso na " + conta);
-			System.out.println("Servidor " + this.nome + ": Chaves: vigenere="
-					+ conexoesServidor.get(index).chaveVigenere + " aes=" + conexoesServidor.get(index).chaveAES
-					+ " hmac=" + conexoesServidor.get(index).chaveHmac);
+
 			conexoesServidor.get(index).outputObject.writeObject(
 					new Mensagem(this.nome, "", cifrador.criptografar("Conta cadastrada com sucesso"), "logado"));
 			conexoesServidor.get(index).enviarChaveHmac();
+			System.out.println("Servidor " + this.nome + ": Chaves: vigenere="
+					+ conexoesServidor.get(index).chaveVigenere + " aes=" + conexoesServidor.get(index).chaveAES
+					+ " hmac=" + conexoesServidor.get(index).chaveHmac);
+			return conta;
 		} else {
 			System.out.println("Servidor " + this.nome + ": Email já está cadastrado ");
 			conexoesServidor.get(index).outputObject.writeObject(
 					new Mensagem(this.nome, "", cifrador.criptografar("Email já está cadastrado"), "falha"));
 
 		}
-		return conta;
+		return null;
 	}
 
 	private void receptarUnicast(Mensagem mensagemRecebida, int index, Mensagem mensagemAnterior, Cifrador cifrador)
@@ -386,9 +389,8 @@ public class ImplServidor implements Runnable {
 									+ mensagemRecebida.getEmissor() + " para " + conexaoServidor.nomeCliente
 									+ " com destino em " + mensagemRecebida.getDestinatario() + " e ultimo receptor "
 									+ receptor);
-							Cifrador cifrador = new Cifrador(conexaoServidor.chaveVigenere,
-									conexaoServidor.chaveAES);
-							
+							Cifrador cifrador = new Cifrador(conexaoServidor.chaveVigenere, conexaoServidor.chaveAES);
+
 							mensagemRecebida.setConteudo(cifrador.criptografar(mensagemRecebida.getConteudo()));
 							mensagemRecebida.setUltimoReceptor(this.nome);
 							conexaoServidor.outputObject.writeObject(mensagemRecebida);
@@ -417,9 +419,8 @@ public class ImplServidor implements Runnable {
 									+ mensagemRecebida.getEmissor() + " para " + conexaoServidor.nomeCliente
 									+ " com destino em " + mensagemRecebida.getDestinatario() + " e ultimo receptor "
 									+ receptor);
-							Cifrador cifrador = new Cifrador(conexaoServidor.chaveVigenere,
-									conexaoServidor.chaveAES);
-							
+							Cifrador cifrador = new Cifrador(conexaoServidor.chaveVigenere, conexaoServidor.chaveAES);
+
 							mensagemRecebida.setConteudo(cifrador.criptografar(mensagemRecebida.getConteudo()));
 							mensagemRecebida.setUltimoReceptor(this.nome);
 							conexaoServidor.outputObject.writeObject(mensagemRecebida);
