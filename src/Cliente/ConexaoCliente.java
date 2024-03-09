@@ -9,6 +9,12 @@ import Cifra.Cifrador;
 import Mensagem.Mensagem;
 
 public class ConexaoCliente {
+	@Override
+	public String toString() {
+		return "ConexaoCliente [socket=" + socket + ", inputObject=" + inputObject + ", outputObject=" + outputObject
+				+ ", nome=" + nome + ", nomeServerConectado=" + nomeServerConectado + "]";
+	}
+
 	private Socket socket;
 	ObjectInputStream inputObject;
 	ObjectOutputStream outputObject;

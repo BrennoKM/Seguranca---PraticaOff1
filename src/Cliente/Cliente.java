@@ -47,7 +47,7 @@ public class Cliente implements Runnable{
 	            System.out.println("Cliente " + this.nome + ": HostAddress = " + inet.getHostAddress());
 	            System.out.println("Cliente " + this.nome + ": HostName = " + inet.getHostName());
 	            ConexaoCliente c = new ConexaoCliente(socket, this.nome);
-	            getClientes().add(c);
+	            this.clientes.add(c);
 	            ImplCliente.contConexoes++;
 	        } catch (IOException e) {
 	        	System.err.println("Cliente " + this.nome + ": tentando se conectar na porta " +this.porta[i]+ " novamente em 5 segundos.");

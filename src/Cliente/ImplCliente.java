@@ -11,7 +11,7 @@ import Mensagem.Mensagem;
 
 public class ImplCliente implements Runnable {
 	List<ConexaoCliente> clientes;
-	private boolean conexao = true, login = false;
+	private boolean conexao = false, login = false;
 	public static int contConexoes = 0;
 	private String nome;
 	String chaveVigenere, chaveHmac, chaveAES;
@@ -32,9 +32,14 @@ public class ImplCliente implements Runnable {
 			// Prepara para leitura do teclado
 			Thread.sleep(1000);
 			Mensagem mensagem = null;
-			while (!conexao) {
-
+			while (conexao == false) {
+				if(clientes.size() != 0) {
+					conexao = true;
+				}
+				//System.out.println("conexao ainda false");
+				Thread.sleep(2000);
 			}
+			System.out.println(this.clientes.get(0));
 			for (ConexaoCliente cliente : this.clientes) {
 				Thread.sleep(500);
 				logar(in, cliente);
@@ -275,9 +280,7 @@ public class ImplCliente implements Runnable {
 
 	private void ouvindoServer(int index) throws Exception {
 		Cifrador cifrador = clientes.get(index).getCifrador();
-		while (!conexao) {
-
-		}
+		
 		while (conexao) {
 			// System.out.println("Whilleee conexaoo");
 			if (login) {
